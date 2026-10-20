@@ -1819,7 +1819,8 @@
         '<div class="card" style="margin-top:14px"><h2>' + svg('yen') + T('Trip integration', 'Reise-Integration') + '</h2>' +
           '<div class="muted" style="font-size:12.5px;margin:-4px 0 10px">' + T('Write into the TREK trip itself (needs your trip-edit permission).', 'Direkt in die TREK-Reise schreiben (benötigt deine Trip-Bearbeitungsrechte).') + '</div>' +
           '<div class="wrap"><button class="btn sec" id="s-cur-jpy">' + T('Set trip currency to JPY (¥)', 'Reisewährung auf JPY (¥) setzen') + '</button>' +
-          '<button class="btn sec" id="s-mute">' + (tp.warnings_muted === '1' ? T('Show planner warnings', 'Planer-Warnungen zeigen') : T('Mute planner warnings', 'Planer-Warnungen stummschalten')) + '</button></div>' +
+          '<button class="btn sec" id="s-mute">' + (tp.warnings_muted === '1' ? T('Show planner warnings', 'Planer-Warnungen zeigen') : T('Mute planner warnings', 'Planer-Warnungen stummschalten')) + '</button>' +
+          '<button class="btn sec" id="s-map-markers">' + (tp.map_markers_enabled === '1' ? T('Hide Japan map markers for this trip', 'Japan-Markierungen für diese Reise ausblenden') : T('Show Japan map markers for this trip', 'Japan-Markierungen für diese Reise anzeigen')) + '</button></div>' +
           '<div class="faint" style="font-size:11px;margin-top:8px">' + T('Muting hides this plugin’s warning bars (weather, budget, Golden Week…) from the trip planner.', 'Stummschalten blendet die Warn-Bars dieses Plugins (Wetter, Budget, Golden Week…) im Planer aus.') + '</div></div>' +
         '<div class="row" style="margin-top:14px"><button class="btn" id="s-save">' + T('Save preferences', 'Einstellungen speichern') + '</button>' +
         '<span class="faint" style="font-size:12px">' + T('Personal settings are per user; the weather location is shared with the trip.', 'Persönliches ist pro Nutzer; der Wetter-Ort gilt für die ganze Reise.') + '</span></div>';
@@ -1869,6 +1870,13 @@
       panel.querySelector('#s-cur-jpy').onclick = function () {
         invoke('/trip/currency', 'POST', {}).then(function (r) { notify('success', T('Trip currency set to', 'Reisewährung gesetzt auf') + ' ' + ((r && r.currency) || 'JPY')); })
           .catch(function (e) { notify('error', e.message || T('Not permitted', 'Nicht erlaubt')); });
+      };
+      panel.querySelector('#s-map-markers').onclick = function () {
+        var enabled = tp.map_markers_enabled === '1';
+        invoke('/prefs', 'POST', { trip_prefs: { map_markers_enabled: enabled ? '0' : '1' } }).then(function () {
+          notify('success', enabled ? T('Japan map markers disabled for this trip. Reload the trip map.', 'Japan-Markierungen deaktiviert. Reisekarte neu laden.') : T('Japan map markers enabled for this trip. Reload the trip map.', 'Japan-Markierungen aktiviert. Reisekarte neu laden.'));
+          sectionCache = {}; openTab('settings', true);
+        }).catch(function (e) { notify('error', e.message); });
       };
       panel.querySelector('#s-mute').onclick = function () {
         var muted = tp.warnings_muted === '1';

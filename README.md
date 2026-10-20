@@ -212,8 +212,7 @@ adds still more will require an admin to re-approve the plugin.
    both install and activation). Install the plugin from the plugin store
    (Admin → Plugins → Discover) and activate it, approving the permissions above.
 2. Open any **trip** in the planner — **TREK × Japan** appears as a tab inside
-   that trip. Everything is automatically scoped to that trip; there is nothing
-   to link by hand.
+   that trip. Planning data is scoped to the open trip. In **TREK × Japan → Settings → Trip integration**, click **Show Japan map markers for this trip** if you want the curated blue Japan map markers on that trip's map. They are hidden by default in every trip, including existing trips, so unrelated trips never inherit Japan markers. Reload the trip map after switching. Each trip has its own shared on/off setting.
 3. Open the **Settings** tab and set your **personal** preferences: home
    currency, IC-card type and the low-balance threshold (these are yours alone).
 4. Still in Settings, set the **trip weather location** (latitude/longitude of
