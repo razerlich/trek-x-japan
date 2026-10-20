@@ -58,7 +58,7 @@ const CHECKLIST_ITEMS = [
 const EMERGENCY_PHRASE_CATEGORY = 'emergency';
 const USER_PREF_KEYS = ['home_currency', 'low_ic_threshold', 'ic_card'];
 const USER_PREF_DEFAULTS = { home_currency: 'EUR', low_ic_threshold: '1000' };
-const TRIP_PREF_KEYS = ['weather_lat', 'weather_lon', 'weather_city', 'warnings_muted'];
+const TRIP_PREF_KEYS = ['weather_lat', 'weather_lon', 'weather_city', 'warnings_muted', 'map_markers_enabled'];
 
 // Read a money value / currency from a native TREK cost item whose exact field
 // names we don't hard-depend on (schema may vary across builds).
@@ -655,7 +655,12 @@ const PLUGIN = {
     mapMarkerProvider: {
       async getMarkers(tripId, ctx) {
         const out = [];
+        const id = toNum(tripId, null);
+        if (id == null) return out;
         try {
+          // Opt-in per trip: never show Japan reference markers in unrelated trips.
+          const prefs = await ctx.db.query('SELECT value FROM trip_prefs WHERE trip_id = ? AND key = ?', id, 'map_markers_enabled');
+          if (!prefs.length || prefs[0].value !== '1') return out;
           SPOTS.forEach(function (s) { if (s.lat != null && s.lon != null) out.push({ id: 'spot-' + s.key, lat: s.lat, lng: s.lon, label: s.name, popupText: (s.city ? s.city + ' — ' : '') + s.en }); });
           POI.forEach(function (p) { if (p.lat != null && p.lon != null) out.push({ id: 'poi-' + p.key, lat: p.lat, lng: p.lon, label: p.name, popupText: p.en }); });
           // Only the authoritative (official 台東区) smoking areas go on the trip
